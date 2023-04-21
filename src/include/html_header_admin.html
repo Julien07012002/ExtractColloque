@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+        <title>ADMIN FONDATION UTT</title>
+
+        <link rel="stylesheet" type="text/css" href="./include/css/all.css">
+        <link rel="stylesheet" type="text/css" href="./include/css/trecherche.css">
+        <link rel="stylesheet" type="text/css" href="./include/js/extras/TableTools/media/css/TableTools.css">
+
+        <link rel="stylesheet" type="text/css" href="./include/css/tresultat.css">
+
+        <script type="text/javascript" src="./include/js/extras/jquery.js"></script>
+        <script type="text/javascript" src="./include/js/extras/jquery.dataTables.js"></script>
+        <script type="text/javascript" src="./include/js/extras/TableTools/media/js/ZeroClipboard.js"></script>
+        <script type="text/javascript" src="./include/js/extras/TableTools/media/js/TableTools.min.js"></script>
+        <script type="text/javascript" src="./include/js/incTable.js" charset="utf-8"></script>
+
+    </head>
+    <body id="dt_example">
+        <div id="container">
+        <!--  <p class="ss_entete">Individu - filtres multicritères</p>
+            <table cellpadding="0" cellspacing="0" border="0" class="display">
+                <thead>
+                    <tr>
+                        <th>Filtrer sur...</th>
+                        <th>Valeur recherchée :</th>
+                        <th>Expression régulière ?</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="filter_col0">
+                        <th id="COL_SORT_0">No. inscription : </th>
+                        <td ><input type="text"     name="COL_FILTER_0" id="COL_FILTER_0"></td>
+                        <td ><input type="checkbox" name="COL_REGEX_0"  id="COL_REGEX_0"></td>
+                    </tr>
+                    <tr id="filter_col1">
+                        <th id="COL_SORT_1">Nom / Prénom : </th>
+                        <td ><input type="text"     name="COL_FILTER_1" id="COL_FILTER_1"></td>
+                        <td ><input type="checkbox" name="COL_REGEX_1"  id="COL_REGEX_1"></td>
+                    </tr>
+                    <tr id="filter_col4">
+                        <th id="COL_SORT_4">Affiliation : </th>
+                        <td ><input type="text"     name="COL_FILTER_4" id="COL_FILTER_4"></td>
+                        <td ><input type="checkbox" name="COL_REGEX_4"  id="COL_REGEX_4"></td>
+                    </tr>
+                    <tr id="filter_col5">
+                        <th id="COL_SORT_5">Pays  : </th>
+                        <td ><input type="text"     name="COL_FILTER_5" id="COL_FILTER_5"></td>
+                        <td ><input type="checkbox" name="COL_REGEX_5"  id="COL_REGEX_5"></td>
+                    </tr>
+                                        <tr id="filter_col6">
+                        <th id="COL_SORT_6">Montant  : </th>
+                        <td ><input type="text"     name="COL_FILTER_6" id="COL_FILTER_6"></td>
+                        <td ><input type="checkbox" name="COL_REGEX_6"  id="COL_REGEX_6"></td>
+                    </tr>
+                </tbody>
+            </table>-->
+            
+             <p class="ss_entete">Dons - filtres simples</p>
+             <table cellpadding="0" cellspacing="0" border="0" class="display">
+                  <tr><td><a href="index.php?filtre=a_traiter">Afficher les dons à traiter (paiement reçu)</a></td>
+                      <td><a href="index.php?filtre=rien">Afficher tous les Dons (pas de filtre)</a></td>
+                  <td><a href="export_data.php?filtre=a_justifier">Export des Dons pour justificatif</a></td></tr>
+                  
+                <tr><td><a href="index.php?filtre=a_relancer">Afficher les Dons à relancer (pas de paiement)</a></td>
+               <td><a href="index.php?filtre=suppr">Afficher les dons supprimés</a></td>
+               <td>   <a href="export_data.php">Export de tous les Dons</a> </td></tr>
+                
+
+                 
+   </table>

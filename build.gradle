@@ -1,0 +1,195 @@
+plugins {
+	id "maven-publish"
+}
+
+def getBuildDate() {
+    def date = new Date()
+    def formattedDate = date.format("yyyy-MM-dd'T'HH:mm:ss'+02:00'")
+    return formattedDate
+}
+
+def BUILD_DATE = getBuildDate()
+
+//On force la définission du nom de projet
+// de peur que cela soit remplacé par celui du job dans Jenkins
+def projectName = "ExtractColloque"
+
+task purge(type: Delete) {
+  //println 'Suppression des anciens fichiers'
+  delete 'vendor', 'logs', 'dist', 'build', 'composer.phar', '${projectName}'
+  delete fileTree(project.projectDir).matching {
+      include '**/*.tar.gz'
+  }
+}
+
+//##################### initialisation fichiers de base #######################
+task deleteEnvs(type: Delete) {
+    delete ('include/config.inc_dev.php')
+    delete ('include/config.inc_pp.php')
+    delete ('include/config.inc_prod.php')
+}
+
+//##################### Re-écriture des environnements des bases de données #######################
+task initDev(type: Copy) {
+    from ('include/config.inc_dev.php')
+    into ('include/')
+    rename 'config.inc_dev.php', 'config.inc.php'
+}
+
+task initRelease(type: Copy) {
+    from ('include/config.inc_pp.php')
+    into ('include/')
+    rename 'config.inc_pp.php', 'config.inc.php'
+}
+
+task initProd(type: Copy) {
+    from ('include/config.inc_prod.php')
+    into ('include/')
+    rename 'config.inc_prod.php', 'config.inc.php'
+}
+
+
+task preparation(type: Exec) {
+  executable 'sh'
+  args '-c', 'mkdir -p dist logs'
+}
+
+task rmCache(type: Exec) {
+  executable 'sh'
+  args '-c', 'rm -rf var/cache'
+}
+
+task compression(type: Exec) {
+  executable 'sh'
+  args '-c', 'php72 bin/console assetic:dump --env=test --no-debug'
+}
+
+task videCache(type: Exec) {
+  executable 'sh'
+  args '-c', 'php72 bin/console cache:clear --no-warmup --env=test'
+}
+
+task vendor(type: Exec) {
+  //println 'Installation des dépendances'
+  executable 'sh'
+  args '-c', 'php72 -d memory_limit=-1 /usr/local/bin/composer install --prefer-dist'
+  standardOutput = new ByteArrayOutputStream()
+  ext.output = { return standardOutput.toString() }
+}
+
+task phpLint(type: Exec) {
+    //println 'Détection erreurs de syntaxes'
+    executable 'sh'
+    args '-c', 'find src -name "*.php" -print0 | xargs -0 -n1 php72 -l'
+}
+
+task test(type: Exec) {
+  //println 'Exécutions tests unitaires'
+  executable 'sh'
+  args '-c', 'php72 $PHP_HOME/phpunit --bootstrap logs/bootstrap.php --configuration phpunit-coverage.xml'
+}
+
+task coverage(type: Exec) {
+  //println 'Exécution de la couverture de code'
+  executable 'sh'
+  args '-c', 'php72 $PHP_HOME/phpunit  --log-junit=logs/unitreport.xml --coverage-clover=logs/clover.xml --coverage-html=logs/coverage_html'
+}
+
+task checkStyle(type: Exec) {
+  //println 'Exécutions tests unitaires'
+  executable 'sh'
+  args '-c', 'php72 $PHP_HOME/phpcs --report=checkstyle --report-file=logs/checkstyle.xml --standard=phpcs.xml --extensions=php,inc --ignore=autoload.php --ignore=vendor/ src || exit 0'
+}
+
+task verificationCode(type: Exec) {
+  //println 'Vérification de codes'
+  executable 'sh'
+  args '-c', 'php72 $PHP_HOME/phpmd src xml phpmd.xml --reportfile logs/pmd.xml --exclude vendor/ --exclude autoload.php || exit 0'
+}
+
+task detectionConflits(type: Exec) {
+  //println 'Détection des conflits'
+  executable 'sh'
+  args '-c', 'php72 $PHP_HOME/phpcpd --log-pmd logs/pmd-cpd.xml --exclude vendor src || exit 0'
+}
+
+task controleLigneDeCode(type: Exec) {
+  //println 'Exécutions tests unitaires'
+  executable 'sh'
+  args '-c', 'php72 $PHP_HOME/phploc --count-tests --exclude vendor/ --log-csv logs/phploc.csv --log-xml logs/phploc.xml src'
+}
+
+task generationDuMetric(type: Exec) {
+  //println 'Génération des métrics'
+  executable 'sh'
+  args '-c', 'php72 $PHP_HOME/pdepend --jdepend-xml=logs/jdepend.xml --jdepend-chart=logs/pdepend/dependencies.svg --overview-pyramid=logs/pdepend/overview-pyramid.svg --ignore=vendor src'
+}
+
+task copyVersion(type: Copy) {
+    project.file('app/config/version.yml').delete()
+    from ('app/config/version/version.yml')
+    into 'app/config/'
+    expand(version : "'" + "${project.version}" +"'")
+}
+
+task generationDoc(type: Exec) {
+  //println 'Génération de la doc technique'
+  executable 'sh'
+  args '-c', 'php72 $PHP_HOME/phpdox -f phpdox.xml'
+}
+
+//On copie le répertoire racine vers dist
+task prePackage(type: Copy) {
+    includeEmptyDirs = false
+    from fileTree(project.projectDir)
+    exclude "dist"
+    exclude "logs"
+    exclude ".gradle"
+    exclude ".idea"
+	into("dist")
+}
+
+//On renomme la distribution en nom du projet paramétré plus pour NEXUS
+task postPackage {
+	doLast {
+		project.file("dist").renameTo("${projectName}")
+	}
+}
+
+//On compresse la distribution pour NEXUS
+task tar(type: Tar) {
+    from fileTree("${projectName}")
+	into("${projectName}")
+    destinationDir file('.')
+	compression = Compression.GZIP
+	version = project.version
+	extension = 'tar.gz'
+}
+
+//Agencement de la séquence d'exécution des tâches
+preparation.dependsOn purge
+vendor.dependsOn preparation
+prePackage.dependsOn vendor
+tar.dependsOn postPackage
+phpLint.finalizedBy tar
+
+//On publie vers le repository utt sur NEXUS
+publishing {
+	repositories {
+		maven {
+			url uttPublishRepositoryUrl
+			credentials {
+				username = nexusAdminName
+				password = nexusAdminPassword
+			}
+		}
+	}
+
+    publications {
+        mavenJava(MavenPublication) {
+			groupId "utt.application"
+			artifactId "${projectName}"
+            artifact tar
+        }
+    }
+}

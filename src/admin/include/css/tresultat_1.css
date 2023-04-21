@@ -1,0 +1,187 @@
+/*
+ * Colour dictionary:
+ *
+ * Table control elements:   #ffffff
+ * Header cells:             #e5ecdb
+ * Body header cells:        #D3D3D3
+ * Body content cells:       #ffffff
+ * Body content cells (alt): #f2f2f2
+ * Footer header:            #fe9c03
+ * Footer content:           #F9ECD9
+*/
+
+
+
+/*
+ * DataTables framework
+*/
+div.dataTables_wrapper {
+    background-color: #ffffff;
+    color : #506c00;
+}
+
+div.dataTables_length {
+    float: left;
+}
+
+div.dataTables_filter {
+    float: right;
+}
+
+div.dataTables_info {
+    padding: 9px 6px 6px 6px;
+    float: left;
+}
+
+div.dataTables_paginate {
+    float: right;
+}
+
+div.dataTables_length,
+div.dataTables_filter,
+div.dataTables_paginate {
+    padding: 6px;
+}
+
+/* Self clearing - http://www.webtoolkit.info/css-clearfix.html */
+.dataTables_wrapper:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+html[xmlns] .dataTables_wrapper {
+    display: block;
+}
+
+* html .dataTables_wrapper {
+    height: 1%;
+}
+
+
+/*
+ * Table styles
+*/
+table.pretty {
+    width: 100%;
+    clear: both;
+    border-top : solid 3px #4c4f58;
+    border-bottom : solid 3px #4c4f58;
+  font-size: 90%;
+}
+
+table.pretty td,
+table.pretty th {
+    color : black;
+    padding: 2px 10px;
+    border: 1px solid #fff;
+
+}
+
+/* Header cells */
+table.pretty thead th {
+    text-align: center;
+    background: #e5ecdb;
+    color : #c44e00;
+}
+
+/* Body cells */
+table.pretty tbody th {
+    text-align: left;
+    background: #D3D3D3;
+}
+
+table.pretty tbody td {
+    text-align: center;
+    background: #ffffff;
+}
+
+table.pretty tbody tr.odd td {
+    background: #f2f2f2;
+}
+
+/* Footer cells */
+table.pretty tfoot th {
+    background: #fe9c03;
+    text-align: left;
+}
+
+table.pretty tfoot td {
+    background: #F9ECD9;
+    text-align: center;
+    font-weight: bold;
+}
+
+
+/*
+ * Pagination
+*/
+a.paginate_button,
+a.paginate_active {
+    display: inline-block;
+    background-color: #e5ecdb;
+    padding: 2px 6px;
+    margin-left: 2px;
+    cursor: pointer;
+    *cursor: hand;
+    color:#c44e00;
+}
+
+a.paginate_active {
+    background-color: transparent;
+    border: 1px solid #e5ecdb;
+    color : #506c00;
+}
+
+a.paginate_button_disabled {
+    color: silver;
+}
+.paging_full_numbers a:active {
+    outline: none
+}
+.paging_full_numbers a:hover {
+    text-decoration: none;
+}
+
+div.dataTables_paginate span>a {
+    width: 15px;
+    text-align: center;
+}
+
+
+/*
+ * Sorting
+*/
+table.pretty thead th.sorting_asc {
+    background: #e5ecdb url('images/sort_asc.png') no-repeat right center;
+}
+
+table.pretty thead th.sorting_desc {
+    background: #e5ecdb url('images/sort_desc.png') no-repeat right center;
+}
+
+table.pretty thead th.sorting {
+    background: #e5ecdb url('images/sort_both.png') no-repeat right center;
+}
+
+
+table.pretty thead th.hidden,
+table.pretty thead td.hidden,
+table.pretty tbody th.hidden,
+table.pretty tbody td.hidden,
+table.pretty tfoot th.hidden,
+table.pretty tfoot td.hidden{
+    display : none;
+
+}
+
+table.pretty tr.even.row_selected td {
+	background-color: #FFEADD ;
+}
+
+table.pretty tr.odd.row_selected td {
+	background-color: #FFDBC6;
+}

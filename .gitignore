@@ -1,0 +1,5 @@
+.idea
+vendor
+composer.lock
+phpCAS.log
+.gradle

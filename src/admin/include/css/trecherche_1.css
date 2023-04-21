@@ -1,0 +1,74 @@
+table.display {
+    margin: 5px auto;
+    margin-bottom : 25px;
+    clear: both;
+    width: 100%;
+    background-color: #f2f2f2;
+    font-size: 90%;
+}
+
+table.display thead th {
+    padding: 3px 18px 3px 10px;
+    background-color: #ffffff;
+    border-bottom: 1px dotted #696969;
+    font-weight: bold;
+    color: #696969;
+}
+
+table.display tbody th {
+    padding: 3px 10px;
+    font-weight: bold;
+    color: #5a554e;
+}
+
+table.display tfoot th {
+    padding: 3px 18px 3px 10px;
+    border-top: 1px solid black;
+    font-weight: bold;
+}
+
+table.display tr.heading2 td {
+    border-bottom: 1px solid #aaa;
+}
+
+table.display td {
+    padding: 3px 10px;
+}
+
+table.display td.center {
+    text-align: center;
+}
+table.display thead th:active,
+table.display thead td:active {
+    outline: none;
+}
+
+table.display tr.even.row_selected td {
+    background-color: #B0BED9;
+}
+
+table.display tr.odd.row_selected td {
+    background-color: #9FAFD1;
+}
+
+
+/*
+ * Sorting
+*/
+table.display tbody th.sorting_asc {
+    background: #e5ecdb url('images/sort_asc.png') no-repeat right center;
+}
+
+table.display tbody th.sorting_desc {
+    background: #e5ecdb url('images/sort_desc.png') no-repeat right center;
+}
+
+table.display tbody th.sorting {
+    background: #e5ecdb url('images/sort_both.png') no-repeat right center;
+}
+
+table.display tbody th {
+    cursor: pointer;
+    * cursor: hand;
+}
+

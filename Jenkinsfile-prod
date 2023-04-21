@@ -1,0 +1,65 @@
+@Library('jenkins-shared-library') _
+
+pipeline {
+    agent any
+    tools {
+        gradle 'Gradle 4.5'
+        jdk 'java8-64bits'
+    }
+
+    parameters {
+    		string(name: 'TAG', defaultValue: "", description: 'Version à construire et publier')
+   	}
+
+    environment {
+        BRANCHE = "${env.GIT_BRANCH}".substring("${env.GIT_BRANCH}".lastIndexOf('/') + 1, "${env.GIT_BRANCH}".length())
+        VERSION = "${env.TAG}"
+        APP_NAME = "ExtractColloque"
+        APP_NAME_LOWER_CASE = "extractcolloque"
+    }
+
+    stages {
+        stage('checkout') {
+            steps {
+                checkout scm: [$class: 'GitSCM',  branches: [[name: "refs/tags/${VERSION}"]]],poll: false
+            }
+        }
+        stage('Write config.inc.php (db connexion)') {
+                      steps {
+                          sh 'gradle initProd deleteEnvs -Pversion=${VERSION}'
+                      }
+                }
+        stage('Clean') {
+            steps {
+                sh 'gradle preparation -Pversion=${VERSION}'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'gradle copyVersion prePackage -Pversion=${VERSION}'
+            }
+        }
+        stage('Package') {
+            steps {
+                sh 'gradle phpLint rmCache -Pversion=${VERSION}'
+            }
+        }
+        stage('Publish') {
+            steps {
+                sh 'gradle publish -Pversion=${VERSION}'
+            }
+        }
+        stage('Deploy') {
+            steps {
+              script {
+                deployPhp name: "${APP_NAME}", version: VERSION, branch: "${BRANCHE}"
+              }
+            }
+        }
+    }
+    post {
+        always {
+            deleteDir()
+        }
+    }
+}
